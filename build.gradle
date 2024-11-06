@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.3.5'
 	id 'io.spring.dependency-management' version '1.1.6'
+	id 'org.flywaydb.flyway' version '9.10.0'
 }
 
 group = 'com.desafio-votacao'
@@ -25,11 +26,12 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'com.h2database:h2'
+	implementation 'org.postgresql:postgresql:42.7.2'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-logging'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'br.com.caelum.stella:caelum-stella-core:2.1.6'
+	implementation 'org.flywaydb:flyway-core:9.10.0'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -39,4 +41,13 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+flyway {
+	url = 'jdbc:postgresql://localhost:5432/desafiovotacaodb'
+	user = 'postgres'
+	password = 'admin'
+	locations = ['classpath:db/migration']
+	schemas = ['public']
+	table = 'flyway_schema_history'
 }
