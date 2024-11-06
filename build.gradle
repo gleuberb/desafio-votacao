@@ -3,6 +3,7 @@ plugins {
 	id 'org.springframework.boot' version '3.3.5'
 	id 'io.spring.dependency-management' version '1.1.6'
 	id 'org.flywaydb.flyway' version '9.10.0'
+	id 'jacoco'
 }
 
 group = 'com.desafio-votacao'
@@ -24,7 +25,12 @@ repositories {
 	mavenCentral()
 }
 
+jacoco {
+	toolVersion = "0.8.12"
+}
+
 dependencies {
+	// Dependências do Spring Boot
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.postgresql:postgresql:42.7.2'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -32,15 +38,42 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'br.com.caelum.stella:caelum-stella-core:2.1.6'
 	implementation 'org.flywaydb:flyway-core:9.10.0'
+
+	// Dependência do Springdoc OpenAPI
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+
+	// Dependências de Lombok
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	// Dependências de teste
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.mockito:mockito-core:5.1.1'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
+	testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+jacoco {
+	toolVersion = '0.8.12'
+}
+
+tasks.test {
+	finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+	dependsOn test
+	reports {
+		xml.required = true    // Relatório XML
+		html.required = true   // Relatório HTML
+		html.outputLocation = file("${project.layout.buildDirectory.get().asFile}/reports/jacoco/test/html")
+	}
 }
 
 flyway {
